@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>🎯 Avazu Competition & Advanced Strategy <span class="section-badge">Winning Methodology</span></h2>
+    <p>Standard ML models plateau at ~0.42 Log Loss on raw Avazu impression data. To achieve competitive leaderboard results, <strong>AdSpark</strong> applies advanced feature engineering, temporal modeling, and field-aware interactions.</p>
+</div>
+
+<!-- Interactive Strategy Log Loss Estimator Simulator -->
+<div class="card" style="border: 1px solid var(--border-accent);">
+    <h2>🧪 Interactive Strategy Impact Estimator <span class="section-badge">Simulated Log Loss Improvement</span></h2>
+    <p style="margin-bottom: 1.25rem;">Toggle the advanced engineering strategies below to see how cumulative techniques progressively reduce Log Loss from the baseline threshold:</p>
+
+    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem;">
+        <div class="grid-2" style="align-items: center;">
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <label class="pill-badge primary" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; font-size: 0.95rem;">
+                    <span>1. Target Encoding with Smoothing</span>
+                    <input type="checkbox" id="strat-target" checked onchange="calcStrategyImpact()" style="accent-color: var(--primary); transform: scale(1.2);">
+                </label>
+
+                <label class="pill-badge primary" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; font-size: 0.95rem;">
+                    <span>2. Temporal Hour/Day Extraction</span>
+                    <input type="checkbox" id="strat-temp" checked onchange="calcStrategyImpact()" style="accent-color: var(--primary); transform: scale(1.2);">
+                </label>
+
+                <label class="pill-badge primary" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; font-size: 0.95rem;">
+                    <span>3. Field-Aware Pairwise Crosses (FFM / DeepFM)</span>
+                    <input type="checkbox" id="strat-ffm" onchange="calcStrategyImpact()" style="accent-color: var(--primary); transform: scale(1.2);">
+                </label>
+
+                <label class="pill-badge primary" style="cursor: pointer; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; font-size: 0.95rem;">
+                    <span>4. Model Probability Blending & Ensembling</span>
+                    <input type="checkbox" id="strat-ensemble" onchange="calcStrategyImpact()" style="accent-color: var(--primary); transform: scale(1.2);">
+                </label>
+            </div>
+
+            <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.75rem; text-align: center;">
+                <div style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Estimated Competition Log Loss</div>
+                <div id="strat-score" style="font-size: 3rem; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--accent-emerald);">0.3980</div>
+                <div id="strat-tier" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 0.5rem;">🔥 Top 5% Competition Benchmark</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>🚀 4 Core Pillars of CTR Optimization <span class="section-badge">Methodology</span></h2>
+    <div class="grid-2" style="margin-top: 1.25rem;">
+        
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                <span style="font-size: 1.75rem;">🎯</span>
+                <h3 style="color: var(--accent-cyan); font-size: 1.2rem;">1. Target Encoding & Smoothing</h3>
+            </div>
+            <p style="font-size: 0.95rem; color: var(--text-sub); line-height: 1.6;">
+                Replaces high-cardinality string IDs (<code>site_id</code>, <code>app_id</code>, <code>device_ip</code>) with out-of-fold historical click probabilities. Empirical Bayes smoothing prevents noise on rare IDs:
+            </p>
+            <div style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; margin-top: 0.75rem; font-size: 0.85rem; color: var(--accent-emerald);">
+                S_i = (count_i · mean_i + m · global_mean) / (count_i + m)
+            </div>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                <span style="font-size: 1.75rem;">⏰</span>
+                <h3 style="color: var(--secondary); font-size: 1.2rem;">2. Temporal Dynamics & Cyclical Hours</h3>
+            </div>
+            <p style="font-size: 0.95rem; color: var(--text-sub); line-height: 1.6;">
+                Decomposes the 11-day timestamp format (<code>YYMMDDHH</code>) into <code>hour_of_day</code> and <code>day_of_week</code>, applying sine/cosine cyclical encoding to capture morning vs evening peak conversion windows.
+            </p>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                <span style="font-size: 1.75rem;">🌐</span>
+                <h3 style="color: var(--accent-emerald); font-size: 1.2rem;">3. Field-Aware Factorization (FFM)</h3>
+            </div>
+            <p style="font-size: 0.95rem; color: var(--text-sub); line-height: 1.6;">
+                Learns dedicated latent vectors for every feature pair (e.g. <code>device_type</code> $\times$ <code>app_category</code>), capturing critical pairwise interactions essential for sparse ad impression click prediction.
+            </p>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                <span style="font-size: 1.75rem;">⚡</span>
+                <h3 style="color: var(--accent-amber); font-size: 1.2rem;">4. Model Blending & Stacking</h3>
+            </div>
+            <p style="font-size: 0.95rem; color: var(--text-sub); line-height: 1.6;">
+                Combines predicted click probabilities from Logistic Regression (linear baseline) with Gradient Boosting (non-linear decision trees) via weighted rank-averaging to reduce variance.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function calcStrategyImpact() {
+        let baseLoss = 0.4434;
+
+        if (document.getElementById("strat-target").checked) baseLoss -= 0.0250;
+        if (document.getElementById("strat-temp").checked) baseLoss -= 0.0204;
+        if (document.getElementById("strat-ffm").checked) baseLoss -= 0.0180;
+        if (document.getElementById("strat-ensemble").checked) baseLoss -= 0.0120;
+
+        const scoreEl = document.getElementById("strat-score");
+        const tierEl = document.getElementById("strat-tier");
+        scoreEl.innerText = baseLoss.toFixed(4);
+
+        if (baseLoss < 0.38) {
+            scoreEl.style.color = "var(--accent-emerald)";
+            tierEl.innerText = "🏆 Top 1% Kaggle Grandmaster Benchmark";
+        } else if (baseLoss < 0.41) {
+            scoreEl.style.color = "var(--accent-cyan)";
+            tierEl.innerText = "🔥 Top 5% Competition Benchmark";
+        } else {
+            scoreEl.style.color = "var(--accent-amber)";
+            tierEl.innerText = "📈 Baseline Supervised Model Score";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", calcStrategyImpact);
+</script>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>📊 Ad Impression Dataset Overview <span class="section-badge">Avazu Benchmark</span></h2>
+    <p>AdSpark processes ad impression logs derived from the famous <strong>Avazu 11-Day Mobile Ad Impression Benchmark Dataset</strong>. Below is the live quantitative summary and dataset schema.</p>
+
+    <div class="grid-4" style="margin-top: 1.5rem;">
+        <div class="stat-box">
+            <div class="stat-number">{{ summary.rows if summary else '10,000' }}</div>
+            <div class="stat-label">Total Impressions</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">{{ summary.columns if summary else '24' }}</div>
+            <div class="stat-label">Raw Features</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" style="color: var(--accent-emerald);">{{ summary.ctr if summary and summary.ctr else '16.25' }}%</div>
+            <div class="stat-label">Average CTR</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" style="color: var(--accent-cyan);">{{ metadata.memory_mb if metadata else '1.8' }} MB</div>
+            <div class="stat-label">Memory Footprint</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>🔍 Live Data Preview <span class="section-badge">First 10 Impressions</span></h2>
+    <p>Direct view of raw impression rows ingested by the data loading module (<code>src/data/load_data.py</code>).</p>
+    
+    <div class="table-wrapper">
+        {{ first_rows|safe }}
+    </div>
+</div>
+
+<div class="card">
+    <h2>📚 Feature Dictionary & Data Schema <span class="section-badge">Column Metadata</span></h2>
+    <p style="margin-bottom: 1.25rem;">Detailed breakdown of feature descriptions and roles within the Avazu CTR predictive dataset:</p>
+
+    <div class="grid-2">
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--accent-cyan); font-size: 1.1rem; margin-bottom: 0.75rem;">🎯 Target & Identifiers</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem;">
+                <li><span class="pill-badge primary">click</span> Target binary label (<code>1</code> = Ad Clicked, <code>0</code> = No Click).</li>
+                <li><span class="pill-badge">id</span> Unique 64-bit integer impression ID (dropped during modeling).</li>
+                <li><span class="pill-badge">hour</span> Impression timestamp format (YYMMDDHH).</li>
+            </ul>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--secondary); font-size: 1.1rem; margin-bottom: 0.75rem;">🌐 Publisher & App Context</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem;">
+                <li><span class="pill-badge">banner_pos</span> Slot position of the ad banner on screen (0, 1, 2).</li>
+                <li><span class="pill-badge">site_id / domain / category</span> Anonymized web publisher metadata.</li>
+                <li><span class="pill-badge">app_id / domain / category</span> Mobile application publisher attributes.</li>
+            </ul>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--accent-emerald); font-size: 1.1rem; margin-bottom: 0.75rem;">📱 User Device Signals</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem;">
+                <li><span class="pill-badge">device_id / device_ip</span> Anonymized user device & IP identifiers.</li>
+                <li><span class="pill-badge">device_model</span> Hardware device model code.</li>
+                <li><span class="pill-badge">device_type</span> Device category (Phone, Tablet, Desktop, TV).</li>
+                <li><span class="pill-badge">device_conn_type</span> Connection protocol (Wifi, 3G, 4G, 5G).</li>
+            </ul>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--accent-amber); font-size: 1.1rem; margin-bottom: 0.75rem;">⚙️ Anonymized Avazu Features</h3>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.95rem;">
+                <li><span class="pill-badge">C1</span> Categorical feature identifier 1.</li>
+                <li><span class="pill-badge">C14 - C21</span> Encrypted numerical & categorical ad auction interaction features.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Styling for rendered pandas table */
+    .dataset-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+    .dataset-table th {
+        background: rgba(30, 41, 59, 0.9);
+        color: var(--accent-cyan);
+        padding: 0.75rem 1rem;
+        white-space: nowrap;
+        border-bottom: 2px solid var(--border-glass);
+    }
+    .dataset-table td {
+        padding: 0.6rem 1rem;
+        border-bottom: 1px solid var(--border-glass);
+        white-space: nowrap;
+    }
+    .dataset-table tr:hover td {
+        background: rgba(99, 102, 241, 0.15);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-card card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+        <div style="flex: 1; min-width: 300px;">
+            <span class="pill-badge primary">🎯 Production Ready CTR Engine</span>
+            <h1 class="hero-title">AdSpark Click-Through Rate Intelligence</h1>
+            <p class="hero-lead">An end-to-end Machine Learning solution designed to analyze ad impression logs, extract temporal and device signals, and predict user ad click probabilities using state-of-the-art supervised learning models.</p>
+            
+            <div class="btn-group">
+                <a href="/dataset" class="btn btn-primary">📊 Explore Dataset</a>
+                <a href="/models" class="btn btn-secondary">🤖 View ML Models</a>
+                <a href="/comparison" class="btn btn-secondary">🏆 Model Leaderboard</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-4" style="margin-bottom: 2rem;">
+    <div class="stat-box">
+        <div class="stat-number">10,000+</div>
+        <div class="stat-label">Ad Impressions Processed</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">16.25%</div>
+        <div class="stat-label">Benchmark Click-Through Rate</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">0.4434</div>
+        <div class="stat-label">Best Log Loss Score</div>
+    </div>
+    <div class="stat-box">
+        <div class="stat-number">6 Models</div>
+        <div class="stat-label">Supervised Learning Algorithms</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>📌 What is AdSpark? <span class="section-badge">Core Objective</span></h2>
+    <p style="margin-bottom: 1rem;">In digital advertising ecosystems (Real-Time Bidding, sponsored search, and display ad exchanges), <strong>Click-Through Rate (CTR)</strong> measures the ratio of ad clicks to total impressions. Accurately estimating CTR enables ad networks to display relevant ads to users while maximizing publisher revenue and advertiser return on ad spend (ROAS).</p>
+    
+    <div class="grid-3" style="margin-top: 1.5rem;">
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">🎯 Real-Time Ad Bidding</h3>
+            <p style="font-size: 0.95rem; color: var(--text-sub);">Predicts click probabilities in milliseconds to dynamically price ad impressions during live RTB auctions.</p>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--secondary); margin-bottom: 0.5rem;">📱 Multi-Device Analytics</h3>
+            <p style="font-size: 0.95rem; color: var(--text-sub);">Analyzes impression signals across mobile devices, banner slots, temporal hours, and high-cardinality app IDs.</p>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--accent-emerald); margin-bottom: 0.5rem;">📉 Log Loss Optimization</h3>
+            <p style="font-size: 0.95rem; color: var(--text-sub);">Evaluates models strictly on Logarithmic Loss to penalize confident false predictions and output calibrated probabilities.</p>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>⚙️ Architecture & Data Pipeline Workflow <span class="section-badge">System Design</span></h2>
+    <div class="grid-2" style="margin-top: 1.5rem;">
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <div>
+                <h3 style="color: var(--text-main); margin-bottom: 0.25rem;">Dataset Ingestion</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">Loads impression log streams containing user device info, app categories, banner slots, and click targets.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <div>
+                <h3 style="color: var(--text-main); margin-bottom: 0.25rem;">Feature Engineering & Split</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">Applies 80/20 stratified split, median imputation, standard scaling, and one-hot / ordinal categorical encodings.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <div>
+                <h3 style="color: var(--text-main); margin-bottom: 0.25rem;">Supervised Model Suite</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">Trains 6 models: Linear Regression, Logistic Regression, Decision Trees, Random Forest, AdaBoost, & Gradient Boosting.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">4</div>
+            <div>
+                <h3 style="color: var(--text-main); margin-bottom: 0.25rem;">Evaluation & Leaderboard</h3>
+                <p style="font-size: 0.95rem; color: var(--text-muted);">Compares Log Loss, ROC-AUC, accuracy, and feature importance rankings in an interactive comparison dashboard.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>⚙️ Data Preprocessing & Feature Engineering <span class="section-badge">Pipeline Architecture</span></h2>
+    <p>The preprocessing pipeline in <code>src/data/preprocess.py</code> transforms raw, high-cardinality ad impression logs into standardized numeric feature vectors optimized for machine learning estimators.</p>
+
+    <div class="grid-3" style="margin-top: 1.5rem;">
+        <div class="stat-box">
+            <div class="stat-number">80% / 20%</div>
+            <div class="stat-label">Stratified Data Split</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" style="color: var(--accent-cyan);">24 ➔ 41</div>
+            <div class="stat-label">Feature Expansion</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" style="color: var(--accent-emerald);">0 Leakage</div>
+            <div class="stat-label">Fit Only On Train Split</div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>📊 Train-Test Dataset Partitioning <span class="section-badge">Stratified Split</span></h2>
+    <p style="margin-bottom: 1.25rem;">To preserve exact Click-Through Rate class proportions (16.25% clicks) across both splits, stratified random splitting is applied:</p>
+
+    <div class="grid-2">
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h3 style="color: #34d399;">🏋️ Training Dataset (80%)</h3>
+                <span class="pill-badge success">8,000 Samples</span>
+            </div>
+            <p style="font-size: 0.95rem; color: var(--text-sub);">Used exclusively to fit imputers, scalers, encoders, and machine learning model parameters.</p>
+            <div style="margin-top: 1rem; font-family: monospace; font-size: 0.9rem; color: var(--accent-cyan);">
+                Matrix Dimensions: [8000, 41]
+            </div>
+        </div>
+
+        <div style="background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: var(--radius-md); padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <h3 style="color: #818cf8;">🧪 Testing Dataset (20%)</h3>
+                <span class="pill-badge primary">2,000 Samples</span>
+            </div>
+            <p style="font-size: 0.95rem; color: var(--text-sub);">Held-out evaluation dataset used strictly for computing out-of-fold Log Loss, ROC-AUC, and Accuracy metrics.</p>
+            <div style="margin-top: 1rem; font-family: monospace; font-size: 0.9rem; color: var(--secondary);">
+                Matrix Dimensions: [2000, 41]
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>🗂️ Feature Partitioning Breakdown <span class="section-badge">Type Categorization</span></h2>
+    <p style="margin-bottom: 1.25rem;">Features are automatically identified and grouped by data type for tailored statistical transformation:</p>
+
+    <div class="grid-2">
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--accent-cyan); margin-bottom: 0.75rem;">🔢 Numerical Features (13 Features)</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">Continuous and discrete integer columns processed via <code>StandardScaler</code>:</p>
+            <div>
+                <span class="pill-badge primary">hour</span>
+                <span class="pill-badge primary">C1</span>
+                <span class="pill-badge primary">banner_pos</span>
+                <span class="pill-badge primary">device_type</span>
+                <span class="pill-badge primary">device_conn_type</span>
+                <span class="pill-badge primary">C14</span>
+                <span class="pill-badge primary">C15</span>
+                <span class="pill-badge primary">C16</span>
+                <span class="pill-badge primary">C17</span>
+                <span class="pill-badge primary">C18</span>
+                <span class="pill-badge primary">C19</span>
+                <span class="pill-badge primary">C20</span>
+                <span class="pill-badge primary">C21</span>
+            </div>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--secondary); margin-bottom: 0.75rem;">🔤 Categorical Features (9 Features)</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.75rem;">String and ID features encoded via <code>OneHotEncoder</code> & <code>OrdinalEncoder</code>:</p>
+            <div>
+                <span class="pill-badge warning">site_id</span>
+                <span class="pill-badge warning">site_domain</span>
+                <span class="pill-badge warning">site_category</span>
+                <span class="pill-badge warning">app_id</span>
+                <span class="pill-badge warning">app_domain</span>
+                <span class="pill-badge warning">app_category</span>
+                <span class="pill-badge warning">device_id</span>
+                <span class="pill-badge warning">device_ip</span>
+                <span class="pill-badge warning">device_model</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>🛠️ Step-by-Step Transformation Pipeline <span class="section-badge">Sequential Steps</span></h2>
+    <div style="margin-top: 1rem;">
+        
+        <div class="step-card">
+            <div class="step-number">1</div>
+            <div>
+                <h3 style="color: var(--text-main); margin-bottom: 0.25rem;">Identifier Filtering</h3>
+                <p style="font-size: 0.95rem; color: var(--text-sub);">Drops non-predictive impression identifiers (<code>id</code>) to prevent model memorization and overfitting.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">2</div>
+            <div>
+                <h3 style="color: var(--text-main); margin-bottom: 0.25rem;">Missing Value Imputation</h3>
+                <p style="font-size: 0.95rem; color: var(--text-sub);">Uses <code>SimpleImputer(strategy='median')</code> fitted strictly on training numerical features to fill missing entries without data leakage.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">3</div>
+            <div>
+                <h3 style="color: var(--text-main); margin-bottom: 0.25rem;">Numerical Standardization</h3>
+                <p style="font-size: 0.95rem; color: var(--text-sub);">Applies <code>StandardScaler</code> ($\mu=0, \sigma=1$) to numerical values ensuring equal gradient step weighting for linear and gradient boosting models.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">4</div>
+            <div>
+                <h3 style="color: var(--text-main); margin-bottom: 0.25rem;">One-Hot Categorical Encoding</h3>
+                <p style="font-size: 0.95rem; color: var(--text-sub);">Encodes categorical variables with $\le 50$ unique levels using <code>OneHotEncoder(handle_unknown='ignore', sparse_output=False)</code>.</p>
+            </div>
+        </div>
+
+        <div class="step-card">
+            <div class="step-number">5</div>
+            <div>
+                <h3 style="color: var(--text-main); margin-bottom: 0.25rem;">Ordinal Categorical Encoding</h3>
+                <p style="font-size: 0.95rem; color: var(--text-sub);">Encodes high-cardinality categorical features using <code>OrdinalEncoder(unknown_value=-1)</code> to preserve feature dimensions.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

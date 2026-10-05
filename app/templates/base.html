@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdSpark - Click-Through Rate (CTR) Machine Learning System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1 class="brand-title">
+                ⚡ AdSpark <span class="brand-badge">ML Platform v2.0</span>
+            </h1>
+            <p>End-to-End Click-Through Rate (CTR) Intelligence & Predictive Analytics Platform</p>
+        </div>
+    </header>
+
+    <nav id="navbar">
+        <a href="/" id="nav-home">Home</a>
+        <a href="/dataset" id="nav-dataset">Dataset</a>
+        <a href="/eda" id="nav-eda">EDA Charts</a>
+        <a href="/preprocessing" id="nav-preprocessing">Preprocessing</a>
+        <a href="/models" id="nav-models">ML Models</a>
+        <a href="/evaluation" id="nav-evaluation">Evaluation</a>
+        <a href="/comparison" id="nav-comparison">Comparison</a>
+        <a href="/strategy" id="nav-strategy">Strategy</a>
+    </nav>
+
+    <main class="container animate-fade">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p><strong>AdSpark CTR Prediction Engine</strong> &copy; 2026. Built with Python, Scikit-Learn, Pandas & Flask.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem;">Avazu 11-Day Ad Impression Dataset Benchmark • Logarithmic Loss Optimization</p>
+    </footer>
+
+    <script>
+        // Auto highlight active nav link
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll("#navbar a");
+            navLinks.forEach(link => {
+                if (link.getAttribute("href") === currentPath) {
+                    link.classList.add("active");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

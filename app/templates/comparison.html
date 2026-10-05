@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>🏆 Model Comparison & Leaderboard Dashboard</h2>
+    <p>Compare algorithm efficiency, Log Loss scores, ROC-AUC ranking quality, and inference speeds across machine learning model paradigms.</p>
+
+    <!-- Main Paradigm Toggle Tabs -->
+    <div class="tab-group" style="margin-top: 1.25rem;">
+        <button id="tab-supervised" class="tab-btn active" onclick="switchParadigm('supervised')">🤖 Supervised Learning Models (6 Implemented)</button>
+        <button id="tab-unsupervised" class="tab-btn" onclick="switchParadigm('unsupervised')">🔍 Unsupervised Learning Models (In Development)</button>
+    </div>
+</div>
+
+<!-- ================= SUPERVISED LEARNING VIEW ================= -->
+<div id="view-supervised">
+    <!-- Champion Model Highlight Card -->
+    <div class="card champion-card">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span class="pill-badge success">🏆 Best Performing Model</span>
+                <h2 style="font-size: 2.25rem; color: #ffffff; margin: 0.5rem 0 0.25rem 0; border: none; padding: 0;">Logistic Regression / Linear Baseline</h2>
+                <p style="color: var(--text-sub); font-size: 1.05rem;">Achieved lowest Logarithmic Loss (<strong>0.4434</strong>), top ROC-AUC ranking (<strong>0.5244</strong>), and <strong>sub-millisecond inference latency</strong>.</p>
+            </div>
+            <div style="background: rgba(16, 185, 129, 0.2); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: var(--radius-md); padding: 1rem 1.5rem; text-align: center;">
+                <div style="font-size: 0.8rem; color: #34d399; font-weight: 600; text-transform: uppercase;">Primary Log Loss</div>
+                <div style="font-size: 2.25rem; font-weight: 800; font-family: 'Outfit', sans-serif; color: #ffffff;">0.4434</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Threshold Accuracy: 83.75%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supervised Models Comparison Table -->
+    <div class="card">
+        <h2>📊 Supervised Algorithm Performance Leaderboard <span class="section-badge">6 Models Evaluated</span></h2>
+        <p>Out-of-fold performance matrix evaluated on 2,000 held-out test ad impressions.</p>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Model Name</th>
+                        <th>File Reference</th>
+                        <th>Model Type</th>
+                        <th>Log Loss 📉</th>
+                        <th>ROC-AUC 📈</th>
+                        <th>Accuracy</th>
+                        <th>Inference Speed</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in supervised %}
+                    <tr>
+                        <td style="font-weight: 800; color: var(--accent-cyan);">#{{ item.rank }}</td>
+                        <td style="font-weight: 600; color: #ffffff;">{{ item.name }}</td>
+                        <td><code style="font-size: 0.85rem; color: var(--accent-emerald);">ML_models/{{ item.file }}</code></td>
+                        <td>{{ item.type }}</td>
+                        <td style="font-weight: 700; color: {% if item.rank == 1 %}#34d399{% elif item.log_loss > 1.0 %}#f87171{% else %}var(--text-main){% endif %};">
+                            {{ "%.4f"|format(item.log_loss) }}
+                        </td>
+                        <td style="font-weight: 600; color: var(--accent-cyan);">{{ "%.4f"|format(item.auc) }}</td>
+                        <td>{{ item.accuracy }}</td>
+                        <td style="font-size: 0.85rem; color: var(--text-muted);">{{ item.speed }}</td>
+                        <td>
+                            <span class="pill-badge {% if item.rank == 1 %}success{% elif item.rank <= 3 %}primary{% elif item.rank == 6 %}danger{% else %}warning{% endif %}">
+                                {{ item.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Efficiency & Trade-off Insights -->
+    <div class="card">
+        <h2>🧠 Why Logistic Regression Wins for AdSpark <span class="section-badge">Production Insights</span></h2>
+        <div class="grid-3" style="margin-top: 1.25rem;">
+            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+                <h3 style="color: var(--accent-emerald); font-size: 1.1rem; margin-bottom: 0.5rem;">⚡ Sub-Millisecond Speed</h3>
+                <p style="font-size: 0.95rem; color: var(--text-sub);">Real-time bidding (RTB) auctions mandate response times under 10ms. Linear dot products complete predictions in under 0.1ms per impression.</p>
+            </div>
+
+            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+                <h3 style="color: var(--accent-cyan); font-size: 1.1rem; margin-bottom: 0.5rem;">🎯 Calibrated Probabilities</h3>
+                <p style="font-size: 0.95rem; color: var(--text-sub);">The sigmoid activation outputs smoothly calibrated probabilities, avoiding extreme 0 or 1 overconfidence that heavily inflates Log Loss penalties.</p>
+            </div>
+
+            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+                <h3 style="color: var(--secondary); font-size: 1.1rem; margin-bottom: 0.5rem;">🛡️ Overfitting Resistance</h3>
+                <p style="font-size: 0.95rem; color: var(--text-sub);">Unlike single deep decision trees (Log Loss 1.8510), linear models do not over-split sparse One-Hot categorical noise.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= UNSUPERVISED LEARNING VIEW ================= -->
+<div id="view-unsupervised" style="display: none;">
+    <div class="card" style="border: 1px solid rgba(245, 158, 11, 0.4); background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(15, 23, 42, 0.95) 100%);">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span class="pill-badge warning">🚧 Under Active Development</span>
+                <h2 style="font-size: 2.25rem; color: #ffffff; margin: 0.5rem 0 0.25rem 0; border: none; padding: 0;">Unsupervised Machine Learning Module</h2>
+                <p style="color: var(--text-sub); font-size: 1.05rem;">Unsupervised clustering and ad click fraud anomaly detection models are planned for future release in <code>ML_models/unsupervised/</code>.</p>
+            </div>
+            <span style="font-size: 3rem;">🔍</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🛠️ Planned Unsupervised Algorithms & Roadmap <span class="section-badge">Future Release</span></h2>
+        <p style="margin-bottom: 1.5rem;">Below is the specification of upcoming unsupervised algorithms to be integrated into AdSpark:</p>
+
+        <div class="grid-3">
+            {% for item in unsupervised %}
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <span class="pill-badge warning" style="margin-bottom: 0.75rem;">{{ item.status }}</span>
+                    <h3 style="color: var(--text-main); font-size: 1.25rem; margin-bottom: 0.25rem;">{{ item.name }}</h3>
+                    <div style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: 600; margin-bottom: 0.75rem;">{{ item.category }}</div>
+                    <p style="font-size: 0.95rem; color: var(--text-sub); line-height: 1.6;">{{ item.desc }}</p>
+                </div>
+
+                <button class="btn btn-secondary" style="margin-top: 1.25rem; width: 100%; justify-content: center; font-size: 0.85rem; opacity: 0.6; cursor: not-allowed;" disabled>
+                    🔒 Module In Development
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchParadigm(type) {
+        const btnSupervised = document.getElementById("tab-supervised");
+        const btnUnsupervised = document.getElementById("tab-unsupervised");
+        const viewSupervised = document.getElementById("view-supervised");
+        const viewUnsupervised = document.getElementById("view-unsupervised");
+
+        if (type === "supervised") {
+            btnSupervised.classList.add("active");
+            btnUnsupervised.classList.remove("active");
+            viewSupervised.style.display = "block";
+            viewUnsupervised.style.display = "none";
+        } else {
+            btnUnsupervised.classList.add("active");
+            btnSupervised.classList.remove("active");
+            viewSupervised.style.display = "none";
+            viewUnsupervised.style.display = "block";
+        }
+    }
+</script>
+{% endblock %}

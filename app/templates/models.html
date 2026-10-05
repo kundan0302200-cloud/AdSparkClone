@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>🤖 Machine Learning Model Hub <span class="section-badge">6 Supervised Models Active</span></h2>
+    <p>AdSpark implements <strong>6 Supervised Machine Learning Models</strong> located in the <code>ML_models/</code> folder. Each model plays a specific architectural role in evaluating click probabilities and benchmark performance.</p>
+
+    <!-- Interactive Model Category Filters -->
+    <div class="tab-group">
+        <button class="tab-btn active" onclick="filterModels('all', this)">All Models (6)</button>
+        <button class="tab-btn" onclick="filterModels('linear', this)">Linear Models (2)</button>
+        <button class="tab-btn" onclick="filterModels('ensemble', this)">Tree & Ensemble Models (4)</button>
+    </div>
+</div>
+
+<div class="grid-3" id="models-grid">
+    {% for model in models %}
+    <div class="card model-card-item" data-category="{% if 'Linear' in model.name or 'Logistic' in model.name %}linear{% else %}ensemble{% endif %}" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <span style="font-size: 2rem;">{{ model.icon }}</span>
+                <span class="pill-badge primary">{{ model.badge }}</span>
+            </div>
+            
+            <h3 style="font-size: 1.4rem; color: var(--text-main); margin-bottom: 0.5rem;">{{ model.name }}</h3>
+            <div style="font-size: 0.85rem; color: var(--accent-cyan); font-weight: 600; margin-bottom: 0.75rem;">
+                {{ model.type }}
+            </div>
+            
+            <p style="font-size: 0.95rem; color: var(--text-sub); line-height: 1.6; margin-bottom: 1.25rem;">
+                {{ model.desc }}
+            </p>
+        </div>
+
+        <div>
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-glass); border-radius: var(--radius-sm); padding: 0.75rem; margin-bottom: 1rem; font-size: 0.85rem;">
+                <div style="color: var(--text-muted); margin-bottom: 0.25rem;"><strong>File Location:</strong></div>
+                <code style="color: var(--accent-emerald);">ML_models/{{ model.file }}</code>
+            </div>
+
+            <button class="btn btn-secondary" style="width: 100%; justify-content: center;" onclick="openModelDetails('{{ model.name }}', '{{ model.class }}', '{{ model.file }}', '{{ model.desc }}')">
+                ⚙️ View Parameters & Role
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Interactive Modal Dialog -->
+<div id="modelModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); z-index: 1000; align-items: center; justify-content: center; padding: 1rem;">
+    <div style="background: var(--bg-dark); border: 1px solid var(--border-accent); border-radius: var(--radius-lg); max-width: 550px; width: 100%; padding: 2rem; box-shadow: var(--glass-shadow); position: relative;" class="animate-fade">
+        <button onclick="closeModelModal()" style="position: absolute; top: 1rem; right: 1rem; background: transparent; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">&times;</button>
+        
+        <h2 id="modalTitle" style="color: var(--text-main); font-size: 1.75rem; margin-bottom: 0.5rem;">Model Details</h2>
+        <div id="modalClass" style="font-family: monospace; font-size: 0.9rem; color: var(--accent-cyan); margin-bottom: 1rem;"></div>
+        
+        <p id="modalDesc" style="color: var(--text-sub); font-size: 0.95rem; margin-bottom: 1.5rem; line-height: 1.6;"></p>
+        
+        <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.5rem;">
+            <h4 style="color: var(--accent-emerald); margin-bottom: 0.5rem; font-size: 0.95rem;">Implementation File</h4>
+            <code id="modalFile" style="color: var(--text-main); font-size: 0.9rem;"></code>
+        </div>
+
+        <button onclick="closeModelModal()" class="btn btn-primary" style="width: 100%; justify-content: center;">Close Inspector</button>
+    </div>
+</div>
+
+<script>
+    function filterModels(category, btnElement) {
+        const tabs = document.querySelectorAll(".tab-btn");
+        tabs.forEach(tab => tab.classList.remove("active"));
+        btnElement.classList.add("active");
+
+        const cards = document.querySelectorAll(".model-card-item");
+        cards.forEach(card => {
+            if (category === "all" || card.getAttribute("data-category") === category) {
+                card.style.display = "flex";
+            } else {
+                card.style.display = "none";
+            }
+        });
+    }
+
+    function openModelDetails(name, cls, file, desc) {
+        document.getElementById("modalTitle").innerText = name;
+        document.getElementById("modalClass").innerText = "scikit-learn class: " + cls;
+        document.getElementById("modalFile").innerText = "ML_models/" + file;
+        document.getElementById("modalDesc").innerText = desc;
+        document.getElementById("modelModal").style.display = "flex";
+    }
+
+    function closeModelModal() {
+        document.getElementById("modelModal").style.display = "none";
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>📈 Exploratory Data Analysis (EDA) <span class="section-badge">Visual Intelligence</span></h2>
+    <p>Automated visual analysis generated directly from <code>src/data/eda.py</code>. Filter charts below by analysis domain to inspect key ad impression patterns.</p>
+
+    <!-- Interactive Filter Buttons -->
+    <div class="tab-group">
+        <button class="tab-btn active" onclick="filterEDA('all', this)">All Charts</button>
+        <button class="tab-btn" onclick="filterEDA('distribution', this)">Class Balance & Traffic</button>
+        <button class="tab-btn" onclick="filterEDA('device', this)">Device Analytics</button>
+        <button class="tab-btn" onclick="filterEDA('placement', this)">Banner Slots</button>
+        <button class="tab-btn" onclick="filterEDA('correlation', this)">Correlation Heatmap</button>
+    </div>
+</div>
+
+<div class="grid-2" id="eda-grid">
+    {% for chart in charts %}
+    <div class="chart-card eda-item" data-category="{{ chart.category }}">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <h3 style="font-size: 1.15rem; color: var(--text-main);">{{ chart.title }}</h3>
+            <span class="pill-badge primary">{{ chart.badge }}</span>
+        </div>
+        
+        <div class="chart-img-wrapper">
+            <img src="{{ url_for('serve_chart', filename=chart.file) }}" alt="{{ chart.title }}" loading="lazy">
+        </div>
+
+        <p style="font-size: 0.95rem; color: var(--text-sub); line-height: 1.6;">{{ chart.desc }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    function filterEDA(category, btnElement) {
+        // Toggle tab active styles
+        const tabs = document.querySelectorAll(".tab-btn");
+        tabs.forEach(tab => tab.classList.remove("active"));
+        btnElement.classList.add("active");
+
+        // Filter chart cards
+        const items = document.querySelectorAll(".eda-item");
+        items.forEach(item => {
+            if (category === "all" || item.getAttribute("data-category") === category) {
+                item.style.display = "block";
+            } else {
+                item.style.display = "none";
+            }
+        });
+    }
+</script>
+{% endblock %}

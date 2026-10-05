@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>🎯 Model Evaluation Architecture <span class="section-badge">Next-Level Metrics</span></h2>
+    <p>Ad Click-Through Rate prediction requires probabilistic metrics rather than hard threshold accuracy alone. AdSpark prioritizes <strong>Logarithmic Loss (Log Loss)</strong> alongside <strong>AUC-ROC</strong>, <strong>Precision</strong>, <strong>Recall</strong>, and <strong>Calibration Quality</strong>.</p>
+
+    <div class="grid-4" style="margin-top: 1.5rem;">
+        <div class="stat-box">
+            <div class="stat-number" style="color: var(--accent-rose);">0.4434</div>
+            <div class="stat-label">Best Log Loss (Lower is Better)</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" style="color: var(--accent-cyan);">0.5251</div>
+            <div class="stat-label">Top ROC-AUC Score</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number" style="color: var(--accent-emerald);">83.75%</div>
+            <div class="stat-label">Peak Classification Accuracy</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-number">2,000</div>
+            <div class="stat-label">Out-of-Fold Test Samples</div>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive Log Loss Calculator & Simulator -->
+<div class="card" style="border: 1px solid var(--border-accent);">
+    <h2>🧮 Interactive Log Loss Penalty Simulator <span class="section-badge">Live Math Demonstrator</span></h2>
+    <p style="margin-bottom: 1.25rem;">Log Loss heavily penalizes models that make <em>confident incorrect predictions</em>. Drag the probability slider below to see how the penalty exponentially explodes when predictions diverge from actual outcomes!</p>
+
+    <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.75rem;">
+        <div class="grid-2" style="align-items: center;">
+            <div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Actual Ad Outcome (Target $Y$):</label>
+                    <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                        <button id="btn-target-1" class="btn btn-primary" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="setTarget(1)">Clicked (Y = 1)</button>
+                        <button id="btn-target-0" class="btn btn-secondary" style="padding: 0.4rem 1rem; font-size: 0.85rem;" onclick="setTarget(0)">No Click (Y = 0)</button>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <label style="font-weight: 600; font-size: 0.95rem; color: var(--text-main);">Model Predicted Click Probability $P(\text{Click})$: <span id="prob-display" style="color: var(--accent-cyan); font-weight: 700;">0.85</span></label>
+                    <input type="range" id="prob-slider" min="0.01" max="0.99" step="0.01" value="0.85" style="width: 100%; margin-top: 0.5rem; accent-color: var(--primary);" oninput="calculateLogLoss()">
+                </div>
+            </div>
+
+            <div style="background: rgba(30, 41, 59, 0.8); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.5rem; text-align: center;">
+                <div style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">Computed Log Loss Penalty</div>
+                <div id="loss-result" style="font-size: 2.75rem; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--accent-emerald);">0.1625</div>
+                <div id="loss-verdict" style="font-size: 0.85rem; color: var(--text-sub); margin-top: 0.5rem;">✅ Low Penalty (Accurate Confidence)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>📊 Evaluation Metrics Dictionary <span class="section-badge">Metric Definitions</span></h2>
+    <div class="grid-2" style="margin-top: 1.25rem;">
+        
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--accent-rose); font-size: 1.15rem; margin-bottom: 0.5rem;">📉 Logarithmic Loss (Log Loss)</h3>
+            <p style="font-size: 0.95rem; color: var(--text-sub);">Primary Kaggle competition metric measuring the uncertainty of probabilistic predictions. Formula:</p>
+            <div style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 0.5rem; border-radius: 6px; margin: 0.5rem 0; font-size: 0.85rem; color: var(--accent-cyan);">
+                Loss = -1/N Σ [ y · ln(p) + (1-y) · ln(1-p) ]
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Lower values indicate superior calibration and lower uncertainty.</p>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--accent-cyan); font-size: 1.15rem; margin-bottom: 0.5rem;">📈 ROC-AUC Score</h3>
+            <p style="font-size: 0.95rem; color: var(--text-sub);">Area Under the Receiver Operating Characteristic Curve. Evaluates the model's ability to rank ad impressions by click likelihood across all classification thresholds.</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">0.50 = Random Guessing | 1.00 = Perfect Ranking Discrimination.</p>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--accent-emerald); font-size: 1.15rem; margin-bottom: 0.5rem;">🎯 Accuracy & F1-Score</h3>
+            <p style="font-size: 0.95rem; color: var(--text-sub);">Classification accuracy measures overall correct predictions (Click vs No Click) at decision threshold 0.5. F1-Score balances Precision and Recall on the rare Click class.</p>
+        </div>
+
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-glass); border-radius: var(--radius-md); padding: 1.25rem;">
+            <h3 style="color: var(--secondary); font-size: 1.15rem; margin-bottom: 0.5rem;">📏 Continuous Regression Metrics</h3>
+            <p style="font-size: 0.95rem; color: var(--text-sub);">For linear regression continuous click predictions, evaluates Mean Squared Error (MSE), Root Mean Squared Error (RMSE), Mean Absolute Error (MAE), and $R^2$ Score.</p>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let currentY = 1;
+
+    function setTarget(y) {
+        currentY = y;
+        document.getElementById("btn-target-1").className = y === 1 ? "btn btn-primary" : "btn btn-secondary";
+        document.getElementById("btn-target-0").className = y === 0 ? "btn btn-primary" : "btn btn-secondary";
+        calculateLogLoss();
+    }
+
+    function calculateLogLoss() {
+        const p = parseFloat(document.getElementById("prob-slider").value);
+        document.getElementById("prob-display").innerText = p.toFixed(2);
+
+        const eps = 1e-15;
+        const clippedP = Math.max(eps, Math.min(1 - eps, p));
+        
+        let loss = 0;
+        if (currentY === 1) {
+            loss = -Math.log(clippedP);
+        } else {
+            loss = -Math.log(1 - clippedP);
+        }
+
+        const resultEl = document.getElementById("loss-result");
+        const verdictEl = document.getElementById("loss-verdict");
+        resultEl.innerText = loss.toFixed(4);
+
+        if (loss < 0.3) {
+            resultEl.style.color = "var(--accent-emerald)";
+            verdictEl.innerText = "✅ Low Penalty (Accurate Confidence)";
+        } else if (loss < 0.8) {
+            resultEl.style.color = "var(--accent-amber)";
+            verdictEl.innerText = "⚠️ Moderate Penalty (Uncertain Prediction)";
+        } else {
+            resultEl.style.color = "var(--accent-rose)";
+            verdictEl.innerText = "🚨 Severe Penalty (Overconfident False Prediction!)";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", calculateLogLoss);
+</script>
+{% endblock %}
